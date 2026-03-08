@@ -18,6 +18,13 @@ The Admin Dashboard is a Next.js 15 (App Router) application independent of the 
 - **Cache Invalidation**: Upon successful mutation, `revalidateTag('menu')` ensures that any cached responses matching the tag are instantly purged.
 - **Optimistic UI**: Components like `InlinePrice` manage their own localized loading/saved/error state visually to provide immediate feedback before the Server Action resolves.
 
+### $10M Scale-Up Features
+- **Global Notifications**: Broadcast active signals and alerts directly to the consumer website.
+- **IoT Quality War Room**: Real-time mock telemetry from dough fermentation fridges and pizza ovens.
+- **Silent Fleet Tracker**: Monitor the Aldona e-bike fleet for location and noise acoustic impact.
+- **Sentiment AI**: Analyze customer satisfaction and product feedback through Natural Language Processing.
+- **Inventory Sync**: Real-time marking of toppings, pizzas, and extras as "Sold Out."
+
 ## Developer & Engineer Guide
 
 ### Prerequisites
@@ -32,6 +39,11 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ADMIN_EMAIL=eilliw.willie@gmail.com
 ```
+
+### Initial Setup Credentials
+The application is pre-configured to use the following credentials for logging into the admin dashboard:
+- **Email**: `eilliw.willie@gmail.com`
+- **Password**: `Wekne@dp1zza!`
 
 ### Local Development
 ```bash

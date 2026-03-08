@@ -24,11 +24,13 @@ export default function PizzaForm({ categories, toppings, onSubmitAction }: { ca
       is_spicy: false,
       is_active: true,
       sort_order: 0,
-      toppings: []
+      toppings: [],
+      image_url: ''
     }
   });
 
   const nameValue = watch('name');
+  const imageUrlValue = watch('image_url');
   const slug = nameValue.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
   const onSubmit = async (data: PizzaFormData) => {
@@ -72,6 +74,20 @@ export default function PizzaForm({ categories, toppings, onSubmitAction }: { ca
           <label className="block text-sm font-medium mb-1">Description</label>
           <textarea {...register('description')} rows={3} className="w-full p-2 border border-[#E5E5E0] rounded focus:border-[#E8540A] outline-none" />
           {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>}
+        </div>
+
+        <div className="md:col-span-2 flex flex-col md:flex-row gap-4">
+           <div className="flex-1">
+             <label className="block text-sm font-medium mb-1">Image URL</label>
+             <input {...register('image_url')} placeholder="https://..." className="w-full p-2 border border-[#E5E5E0] rounded focus:border-[#E8540A] outline-none" />
+             <p className="text-xs text-[#8C7E6A] mt-1">Direct link to an image. Leave empty to use generic mesh fallback.</p>
+           </div>
+           {imageUrlValue && (
+              <div className="w-32 h-32 shrink-0 rounded border border-[#E5E5E0] overflow-hidden bg-gray-50 flex items-center justify-center relative">
+                 {/* eslint-disable-next-line @next/next/no-img-element */}
+                 <img src={imageUrlValue} alt="Preview" className="w-full h-full object-cover" onError={(e) => e.currentTarget.style.display = 'none'} />
+              </div>
+           )}
         </div>
 
         <div>

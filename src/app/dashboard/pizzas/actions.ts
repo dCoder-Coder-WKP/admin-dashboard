@@ -13,8 +13,6 @@ export async function createPizza(data: PizzaFormData) {
     .from('pizzas')
     .insert({
       slug,
-      name: data.name,
-      description: data.description,
       category_id: data.category_id,
       price_small: data.price_small,
       price_medium: data.price_medium,
@@ -22,7 +20,8 @@ export async function createPizza(data: PizzaFormData) {
       is_bestseller: data.is_bestseller,
       is_spicy: data.is_spicy,
       is_active: data.is_active,
-      sort_order: data.sort_order
+      sort_order: data.sort_order,
+      image_url: data.image_url || null
     })
     .select('id')
     .single();

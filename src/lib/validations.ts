@@ -12,6 +12,7 @@ export const pizzaSchema = z.object({
   is_active: z.boolean(),
   sort_order: z.number(),
   toppings: z.array(z.string()),
+  image_url: z.string().optional(),
 });
 
 export type PizzaFormData = z.infer<typeof pizzaSchema>;
