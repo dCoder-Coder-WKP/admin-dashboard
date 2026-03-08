@@ -21,13 +21,18 @@ export default async function PricesPage() {
     .select('*, categories(label)')
     .order('name', { ascending: true });
 
+interface BaseItem { id: string; name: string; categories?: { label: string } }
+interface Pizza extends BaseItem { price_small: number; price_medium: number; price_large: number }
+interface Topping extends BaseItem { price_small: number; price_medium: number; price_large: number }
+interface Extra extends BaseItem { price: number }
+
   // Group pizzas by category
-  const pizzasByCategory = pizzas?.reduce((acc: Record<string, any[]>, pizza: any) => {
-    const cat = pizza.categories?.label || 'Uncategorized';
+  const pizzasByCategory = pizzas?.reduce((acc: Record<string, Pizza[]>, pizza) => {
+    const cat = (pizza as Pizza & { categories?: { label: string } }).categories?.label || 'Uncategorized';
     acc[cat] = acc[cat] || [];
-    acc[cat].push(pizza);
+    acc[cat].push(pizza as Pizza);
     return acc;
-  }, {} as Record<string, any[]>) || {};
+  }, {} as Record<string, Pizza[]>) || {};
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -55,7 +60,7 @@ export default async function PricesPage() {
                    </tr>
                  </thead>
                  <tbody className="divide-y divide-[#E5E5E0]">
-                   {(list as any[]).map((p: any) => (
+                   {(list as Pizza[]).map((p) => (
                       <tr key={p.id} className="hover:bg-gray-50 transition-colors">
                         <td className="p-3 font-medium">{p.name}</td>
                         <td className="p-3"><InlinePrice pizzaId={p.id} size="small" initialPrice={p.price_small} /></td>
@@ -83,7 +88,7 @@ export default async function PricesPage() {
                  </tr>
                </thead>
                <tbody className="divide-y divide-[#E5E5E0]">
-                 {toppings?.map((t: any) => (
+                 {(toppings as Topping[])?.map((t) => (
                     <tr key={t.id} className="hover:bg-gray-50 transition-colors">
                       <td className="p-3 font-medium">{t.name}</td>
                       <td className="p-3 text-right text-[#8C7E6A]">₹{t.price_small}</td>
@@ -106,7 +111,7 @@ export default async function PricesPage() {
                  </tr>
                </thead>
                <tbody className="divide-y divide-[#E5E5E0]">
-                 {extras?.map((e: any) => (
+                 {(extras as Extra[])?.map((e) => (
                     <tr key={e.id} className="hover:bg-gray-50 transition-colors">
                       <td className="p-3 font-medium">{e.name}</td>
                       <td className="p-3 text-[#8C7E6A]">{e.categories?.label}</td>

@@ -7,7 +7,7 @@ export interface OrderItem {
   size?: 'small' | 'medium' | 'large';
   quantity: number;
   price: number;
-  customization_json: Record<string, any>;
+  customization_json: Record<string, unknown>;
   pizzas?: { name: string };
   extras?: { name: string };
 }

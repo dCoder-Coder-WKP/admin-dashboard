@@ -5,10 +5,9 @@ import { getMockIotReadings, IotReading } from "@/lib/iot-mock";
 import { Activity, Thermometer, Droplets, Zap } from "lucide-react";
 
 export default function IotDashboardPage() {
-  const [readings, setReadings] = useState<IotReading[]>([]);
+  const [readings, setReadings] = useState<IotReading[]>(getMockIotReadings());
 
   useEffect(() => {
-    setReadings(getMockIotReadings());
     const interval = setInterval(() => {
       // Simulate slight fluctuations
       setReadings((current) =>

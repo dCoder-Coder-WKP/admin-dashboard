@@ -14,7 +14,7 @@ export default function TogglePizzaActive({ pizzaId, initialActive }: { pizzaId:
       await togglePizzaActive(pizzaId, active);
       setActive(!active);
       toast.success(active ? 'Pizza deactivated' : 'Pizza activated');
-    } catch (e) {
+    } catch {
       toast.error('Failed to toggle status');
     } finally {
       setLoading(false);

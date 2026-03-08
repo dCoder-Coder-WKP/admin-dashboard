@@ -18,7 +18,7 @@ export default function InlinePrice({ pizzaId, size, initialPrice }: { pizzaId: 
       setOriginalPrice(price);
       setStatus('saved');
       setTimeout(() => setStatus('idle'), 1500);
-    } catch (e) {
+    } catch {
       setPrice(originalPrice);
       setStatus('error');
       toast.error('Failed to update price');

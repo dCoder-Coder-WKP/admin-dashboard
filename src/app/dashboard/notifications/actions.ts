@@ -3,7 +3,7 @@
 import { createSupabaseServer } from '@/lib/supabaseServer';
 import { revalidatePath } from 'next/cache';
 
-export async function toggleNotificationActive(id: string, currentState: boolean, formData?: FormData) {
+export async function toggleNotificationActive(id: string, currentState: boolean) {
   const supabase = await createSupabaseServer();
   const { error } = await supabase
     .from('notifications')
@@ -18,7 +18,7 @@ export async function toggleNotificationActive(id: string, currentState: boolean
   revalidatePath('/', 'layout');
 }
 
-export async function deleteNotification(id: string, formData?: FormData) {
+export async function deleteNotification(id: string) {
   const supabase = await createSupabaseServer();
   const { error } = await supabase
     .from('notifications')

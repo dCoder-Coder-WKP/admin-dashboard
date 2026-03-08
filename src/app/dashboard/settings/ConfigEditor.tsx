@@ -5,7 +5,8 @@ import toast from 'react-hot-toast';
 import { updateSiteConfig } from './actions';
 import { Check, X, Edit2 } from 'lucide-react';
 
-export default function ConfigEditor({ config }: { config: any }) {
+interface Config { key: string; value: string; label: string; type: string }
+export default function ConfigEditor({ config }: { config: Config }) {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(config.value);
   const [isSaving, setIsSaving] = useState(false);
@@ -16,7 +17,7 @@ export default function ConfigEditor({ config }: { config: any }) {
       await updateSiteConfig(config.key, value);
       setIsEditing(false);
       toast.success(`${config.label} updated`);
-    } catch (e: any) {
+    } catch {
       toast.error('Failed to update config');
       setValue(config.value); // Revert
     } finally {

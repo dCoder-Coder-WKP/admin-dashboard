@@ -18,8 +18,9 @@ export default function ToggleSoldOut({ id, initialSoldOut, type }: { id: string
       }
       setIsSoldOut(!isSoldOut);
       toast.success(isSoldOut ? 'Marked as In Stock' : 'Marked as Sold Out!');
-    } catch (e: any) {
-      toast.error(e.message || 'Failed to update stock status');
+    } catch (e) {
+      const err = e as { message?: string };
+      toast.error(err.message || 'Failed to update stock status');
     } finally {
       setLoading(false);
     }

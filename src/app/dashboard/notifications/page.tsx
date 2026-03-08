@@ -34,7 +34,7 @@ export default async function NotificationsPage() {
       </div>
 
       <div className="space-y-4">
-        {notifications?.map((note: any) => (
+        {notifications?.map((note) => (
           <div key={note.id} className={`bg-white border rounded-xl p-5 shadow-sm transition-all ${note.is_active ? 'border-[#E5E5E0]' : 'border-gray-200 opacity-60'}`}>
             <div className="flex gap-4">
               <div className={`p-3 rounded-full h-fit flex-shrink-0 ${note.is_active ? 'bg-gray-50' : 'bg-gray-100 grayscale'}`}>

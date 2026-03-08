@@ -34,16 +34,13 @@ function emit(entry: LogEntry): void {
   switch (entry.level) {
     case 'info':
       if (!IS_PRODUCTION) {
-        // eslint-disable-next-line no-console
         console.log(formatted, entry.data ?? '');
       }
       break;
     case 'warn':
-      // eslint-disable-next-line no-console
       console.warn(formatted, entry.data ?? '');
       break;
     case 'error':
-      // eslint-disable-next-line no-console
       console.error(formatted, entry.data ?? '');
       break;
   }

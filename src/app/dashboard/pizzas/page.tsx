@@ -36,7 +36,7 @@ export default async function PizzasPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-[#E5E5E0]">
-            {pizzas?.map((pizza: any) => (
+            {pizzas?.map((pizza) => (
               <tr key={pizza.id} className="text-sm hover:bg-gray-50 transition-colors">
                 <td className="p-4">
                   <span className="font-medium text-[#1A1712]">{pizza.name}</span>

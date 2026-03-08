@@ -7,7 +7,18 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
-export default function PizzaForm({ categories, toppings, onSubmitAction }: { categories: any[], toppings: any[], onSubmitAction: (data: PizzaFormData) => Promise<void> }) {
+interface Category {
+  id: string;
+  label: string;
+}
+
+interface Topping {
+  id: string;
+  name: string;
+  category: string;
+}
+
+export default function PizzaForm({ categories, toppings, onSubmitAction }: { categories: Category[], toppings: Topping[], onSubmitAction: (data: PizzaFormData) => Promise<void> }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -40,8 +51,9 @@ export default function PizzaForm({ categories, toppings, onSubmitAction }: { ca
       toast.success('Pizza saved successfully');
       router.push('/dashboard/pizzas');
       router.refresh();
-    } catch (e: any) {
-      toast.error(e.message || 'Failed to save pizza');
+    } catch (e) {
+      const err = e as { message?: string };
+      toast.error(err.message || 'Failed to save pizza');
     } finally {
       setIsSubmitting(false);
     }
@@ -52,12 +64,12 @@ export default function PizzaForm({ categories, toppings, onSubmitAction }: { ca
     acc[t.category] = acc[t.category] || [];
     acc[t.category].push(t);
     return acc;
-  }, {} as Record<string, any[]>);
+  }, {} as Record<string, Topping[]>);
 
   const selectedToppings = watch('toppings') || [];
 
   return (
-    <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-8 bg-white p-6 border border-[#E5E5E0] shadow-sm rounded max-w-3xl">
+    <form onSubmit={handleSubmit((data) => onSubmit(data))} className="space-y-8 bg-white p-6 border border-[#E5E5E0] shadow-sm rounded max-w-3xl">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="md:col-span-2">
           <label className="block text-sm font-medium mb-1">Name</label>
@@ -125,7 +137,7 @@ export default function PizzaForm({ categories, toppings, onSubmitAction }: { ca
            <div key={cat} className="mb-4">
              <h4 className="font-semibold text-sm mb-2 text-[#8C7E6A]">{cat}</h4>
              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {(tops as any[]).map((t: any) => (
+                {(tops as Topping[]).map((t) => (
                   <label key={t.id} className="flex items-center gap-2 text-sm">
                     <input 
                       type="checkbox" 

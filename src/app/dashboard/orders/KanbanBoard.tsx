@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { DndContext, closestCorners, DragEndEvent, DragStartEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Order, OrderStatus } from '@/types/orders';
 import { createSupabaseBrowser } from '@/lib/supabaseBrowser';
 import Column from './Column';
@@ -17,40 +16,13 @@ const COLUMNS: { id: OrderStatus; title: string }[] = [
 
 export default function KanbanBoard({ initialOrders }: { initialOrders: Order[] }) {
   const [orders, setOrders] = useState<Order[]>(initialOrders);
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [, setActiveId] = useState<string | null>(null);
   
   const supabase = createSupabaseBrowser();
 
   useEffect(() => {
     setOrders(initialOrders);
   }, [initialOrders]);
-
-  useEffect(() => {
-    // Setup Realtime Subscription
-    const channel = supabase
-      .channel('orders-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'orders' },
-        (payload) => {
-          if (payload.eventType === 'INSERT') {
-            const newOrder = payload.new as Order;
-            // Need to fetch full order to get items, standard approach is to trust server revalidation
-            // But for instant UX, we just refetch everything softly
-            fetchLatestOrders();
-          } else if (payload.eventType === 'UPDATE') {
-            setOrders(prev => prev.map(o => o.id === payload.new.id ? { ...o, ...payload.new } : o));
-          } else if (payload.eventType === 'DELETE') {
-            setOrders(prev => prev.filter(o => o.id !== payload.old.id));
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [supabase]);
 
   const fetchLatestOrders = async () => {
     const { data } = await supabase
@@ -68,6 +40,32 @@ export default function KanbanBoard({ initialOrders }: { initialOrders: Order[] 
       
     if (data) setOrders(data as Order[]);
   };
+
+  useEffect(() => {
+    // Setup Realtime Subscription
+    const channel = supabase
+      .channel('orders-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'orders' },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            // Refetch everything for full order data
+            fetchLatestOrders();
+          } else if (payload.eventType === 'UPDATE') {
+            setOrders(prev => prev.map(o => o.id === payload.new.id ? { ...o, ...payload.new } : o));
+          } else if (payload.eventType === 'DELETE') {
+            setOrders(prev => prev.filter(o => o.id !== payload.old.id));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [supabase]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),

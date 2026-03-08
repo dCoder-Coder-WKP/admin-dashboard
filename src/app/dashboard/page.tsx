@@ -86,7 +86,7 @@ export default async function DashboardOverview() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E5E5E0] text-sm md:text-base">
-              {recentOrders?.map((order: any) => (
+              {recentOrders?.map((order) => (
                 <tr key={order.order_number} className="hover:bg-gray-50 transition-colors">
                   <td className="p-4 font-mono font-medium">#{order.order_number}</td>
                   <td className="p-4">{order.customer_name}</td>
