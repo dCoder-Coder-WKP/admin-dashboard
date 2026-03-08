@@ -1,5 +1,7 @@
+'use server';
+
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
-import { revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { Size } from '@/types';
 import { PizzaFormData } from '@/lib/validations';
 
@@ -40,7 +42,7 @@ export async function createPizza(data: PizzaFormData) {
     if (ptErr) throw new Error(ptErr.message);
   }
   
-  revalidateTag('menu');
+  revalidatePath('/dashboard/pizzas');
 }
 
 export async function updatePizzaPrice(id: string, size: Size, price: number) {
@@ -55,7 +57,7 @@ export async function updatePizzaPrice(id: string, size: Size, price: number) {
     
   if (error) throw error;
   
-  revalidateTag('menu');
+  revalidatePath('/dashboard/pizzas');
 }
 
 export async function togglePizzaActive(id: string, currentState: boolean) {
@@ -66,7 +68,7 @@ export async function togglePizzaActive(id: string, currentState: boolean) {
     
   if (error) throw error;
   
-  revalidateTag('menu');
+  revalidatePath('/dashboard/pizzas');
 }
 
 export async function deletePizza(id: string) {
@@ -77,5 +79,5 @@ export async function deletePizza(id: string) {
     
   if (error) throw error;
   
-  revalidateTag('menu');
+  revalidatePath('/dashboard/pizzas');
 }
