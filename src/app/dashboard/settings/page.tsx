@@ -1,5 +1,6 @@
 import { createSupabaseServer } from '@/lib/supabaseServer';
 import ConfigEditor from './ConfigEditor';
+import AddConfigRow from './AddConfigRow';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,6 +27,7 @@ export default async function SettingsPage() {
           {configs.map((config) => (
             <ConfigEditor key={config.key} config={config} />
           ))}
+          <AddConfigRow />
         </div>
       </div>
     </div>

@@ -5,6 +5,41 @@ import { revalidatePath } from 'next/cache';
 import { Size } from '@/types';
 import { PizzaFormData } from '@/lib/validations';
 
+export async function updatePizza(id: string, data: PizzaFormData) {
+  const { error: pErr } = await supabaseAdmin
+    .from('pizzas')
+    .update({
+      name: data.name,
+      description: data.description,
+      category_id: data.category_id,
+      price_small: data.price_small,
+      price_medium: data.price_medium,
+      price_large: data.price_large,
+      is_bestseller: data.is_bestseller,
+      is_spicy: data.is_spicy,
+      is_active: data.is_active,
+      sort_order: data.sort_order,
+      image_url: data.image_url || null,
+    })
+    .eq('id', id);
+
+  if (pErr) throw new Error(pErr.message);
+
+  // Replace pizza_toppings
+  await supabaseAdmin.from('pizza_toppings').delete().eq('pizza_id', id);
+  if (data.toppings.length > 0) {
+    const ptRows = data.toppings.map(tid => ({
+      pizza_id: id,
+      topping_id: tid,
+    }));
+    const { error: ptErr } = await supabaseAdmin.from('pizza_toppings').insert(ptRows);
+    if (ptErr) throw new Error(ptErr.message);
+  }
+
+  revalidatePath('/dashboard/pizzas');
+  revalidatePath('/dashboard/prices');
+}
+
 export async function createPizza(data: PizzaFormData) {
   const slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   

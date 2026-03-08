@@ -13,6 +13,27 @@ export async function updateSiteConfig(key: string, value: string) {
     throw new Error(error.message);
   }
 
-  // Next.js cache invalidation so changes reflect immediately across the site
+  revalidatePath('/', 'layout');
+}
+
+export async function createSiteConfig(key: string, value: string, label: string, type: string) {
+  if (!key.trim() || !label.trim()) throw new Error('Key and Label are required');
+  const { error } = await supabaseAdmin
+    .from('site_config')
+    .insert({ key: key.trim(), value, label: label.trim(), type });
+
+  if (error) throw new Error(error.message);
+  revalidatePath('/dashboard/settings');
+  revalidatePath('/', 'layout');
+}
+
+export async function deleteSiteConfig(key: string) {
+  const { error } = await supabaseAdmin
+    .from('site_config')
+    .delete()
+    .eq('key', key);
+
+  if (error) throw new Error(error.message);
+  revalidatePath('/dashboard/settings');
   revalidatePath('/', 'layout');
 }

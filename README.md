@@ -14,16 +14,24 @@ The Admin Dashboard is a Next.js 15 (App Router) application independent of the 
    - The Service Role key must NEVER be exposed to the client bundle.
 
 ### Design Pattern
-- **Server Actions**: All mutations (Updates, Creates, Deletes) are handled via Next.js Server Actions (e.g., `app/dashboard/pizzas/actions.ts`). 
-- **Cache Invalidation**: Upon successful mutation, `revalidateTag('menu')` ensures that any cached responses matching the tag are instantly purged.
-- **Optimistic UI**: Components like `InlinePrice` manage their own localized loading/saved/error state visually to provide immediate feedback before the Server Action resolves.
+- **Server Actions**: All mutations (Create, Read, Update, Delete) are handled via Next.js Server Actions (`actions.ts` files within each route domain). 
+- **Cache Invalidation**: Upon successful mutation, `revalidatePath` and `revalidateTag('menu')` ensure that any cached responses matching the tag are instantly purged.
+- **Optimistic/Inline UI**: Components like `InlinePrice` (and its variants for toppings/extras) manage their own localized loading/saved/error state visually to provide immediate feedback before the Server Action resolves.
+- **Modal Forms**: Complex entities like Toppings, Extras, and Notifications utilize reusable Modal components powered by standard React state and styled with Tailwind.
 
-### $10M Scale-Up Features
-- **Global Notifications**: Broadcast active signals and alerts directly to the consumer website.
+### Active Data Entities (Full CRUD Supported)
+- **Pizzas**: Creation, Updates (including price and topping relations), Deletion, Activation Toggle.
+- **Toppings & Extras**: Full property management, inline price edits, and sold-out toggles.
+- **Categories**: Drag-and-drop or manual sort ordering management for pizza/extra classification.
+- **Orders**: Live Kanban board with drag-and-drop status updates + History view for completed/cancelled orders.
+- **Site Config**: Real-time management of global app constants (keys, values, boolean toggles).
+- **Notifications (Signals)**: Broadcast global alerts with expiration and pinning support.
+
+### $10M Scale-Up Features (Mock/Visual only)
+All of these features are beautifully animated but operate strictly on mock data. They are prominently marked with a `PLACEHOLDER / DEMO` badge within the UI to avoid confusion.
 - **IoT Quality War Room**: Real-time mock telemetry from dough fermentation fridges and pizza ovens.
 - **Silent Fleet Tracker**: Monitor the Aldona e-bike fleet for location and noise acoustic impact.
 - **Sentiment AI**: Analyze customer satisfaction and product feedback through Natural Language Processing.
-- **Inventory Sync**: Real-time marking of toppings, pizzas, and extras as "Sold Out."
 
 ## Developer & Engineer Guide
 

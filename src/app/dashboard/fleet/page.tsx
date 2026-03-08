@@ -42,6 +42,7 @@ export default function FleetTrackerPage() {
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
             <MapIcon className="text-green-600 w-8 h-8" />
             Silent Fleet Tracker
+            <span className="ml-4 bg-orange-100 text-orange-800 text-xs font-bold px-3 py-1 rounded-full border border-orange-200 uppercase tracking-widest shadow-sm">Placeholder / Demo</span>
           </h1>
           <p className="text-gray-500 mt-2">
             Monitoring the acoustic impact and real-time position of our Aldona fleet.

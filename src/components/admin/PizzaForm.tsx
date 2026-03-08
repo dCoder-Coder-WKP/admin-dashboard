@@ -18,13 +18,14 @@ interface Topping {
   category: string;
 }
 
-export default function PizzaForm({ categories, toppings, onSubmitAction }: { categories: Category[], toppings: Topping[], onSubmitAction: (data: PizzaFormData) => Promise<void> }) {
+export default function PizzaForm({ categories, toppings, onSubmitAction, initialData }: { categories: Category[], toppings: Topping[], onSubmitAction: (data: PizzaFormData) => Promise<void>, initialData?: PizzaFormData }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isEdit = !!initialData;
   
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<PizzaFormData>({
     resolver: zodResolver(pizzaSchema),
-    defaultValues: {
+    defaultValues: initialData ?? {
       name: '',
       description: '',
       category_id: categories?.[0]?.id || '',
@@ -178,7 +179,7 @@ export default function PizzaForm({ categories, toppings, onSubmitAction }: { ca
       <div className="flex justify-end gap-4 pt-4">
          <button type="button" onClick={() => router.back()} className="px-6 py-2 border border-[#E5E5E0] text-[#8C7E6A] rounded hover:bg-gray-50 transition-colors">Cancel</button>
          <button type="submit" disabled={isSubmitting} className="px-6 py-2 bg-[#E8540A] text-white rounded hover:bg-[#c94607] transition-colors disabled:opacity-50">
-            {isSubmitting ? 'Saving...' : 'Save Pizza'}
+            {isSubmitting ? 'Saving...' : isEdit ? 'Update Pizza' : 'Save Pizza'}
          </button>
       </div>
     </form>

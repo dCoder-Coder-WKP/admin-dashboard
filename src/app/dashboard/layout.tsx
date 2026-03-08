@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { createSupabaseBrowser } from '@/lib/supabaseBrowser';
-import { LayoutDashboard, Pizza, ShoppingBasket, IndianRupee, Bell, Settings, LogOut, Zap, TrendingUp, Map as MapIcon, PackageOpen } from 'lucide-react';
+import { LayoutDashboard, Pizza, ShoppingBasket, IndianRupee, Bell, Settings, LogOut, Zap, TrendingUp, Map as MapIcon, PackageOpen, Layers } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -16,6 +16,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { href: '/dashboard/orders', label: 'Live Orders', icon: PackageOpen },
     { href: '/dashboard/pizzas', label: 'Pizzas', icon: Pizza },
     { href: '/dashboard/toppings', label: 'Toppings & Extras', icon: ShoppingBasket },
+    { href: '/dashboard/categories', label: 'Categories', icon: Layers },
     { href: '/dashboard/iot', label: 'IoT Quality Room', icon: Zap },
     { href: '/dashboard/sentiment', label: 'Sentiment AI', icon: TrendingUp },
     { href: '/dashboard/fleet', label: 'Fleet Tracker', icon: MapIcon },

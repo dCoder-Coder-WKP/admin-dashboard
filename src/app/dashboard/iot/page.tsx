@@ -26,6 +26,7 @@ export default function IotDashboardPage() {
         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
           <Zap className="text-yellow-500 w-8 h-8" />
           Artisanal IoT Quality War Room
+          <span className="ml-4 bg-orange-100 text-orange-800 text-xs font-bold px-3 py-1 rounded-full border border-orange-200 uppercase tracking-widest shadow-sm">Placeholder / Demo</span>
         </h1>
         <p className="text-gray-500 mt-2">
           Real-time biological and thermal monitoring of the Carona bakery.

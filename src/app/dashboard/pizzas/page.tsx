@@ -2,6 +2,7 @@ import { createSupabaseServer } from '@/lib/supabaseServer';
 import Link from 'next/link';
 import InlinePrice from '@/components/admin/InlinePrice';
 import TogglePizzaActive from '@/components/admin/TogglePizzaActive';
+import DeletePizzaButton from '@/components/admin/DeletePizzaButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -56,7 +57,10 @@ export default async function PizzasPage() {
                    <TogglePizzaActive pizzaId={pizza.id} initialActive={pizza.is_active} />
                 </td>
                 <td className="p-4 text-center">
-                  <Link href={`/dashboard/pizzas/${pizza.id}/edit`} className="text-[#E8540A] hover:underline mr-4">Edit</Link>
+                  <div className="flex justify-center items-center gap-3">
+                    <Link href={`/dashboard/pizzas/${pizza.id}/edit`} className="text-[#E8540A] hover:underline text-sm">Edit</Link>
+                    <DeletePizzaButton pizzaId={pizza.id} pizzaName={pizza.name} />
+                  </div>
                 </td>
               </tr>
             ))}

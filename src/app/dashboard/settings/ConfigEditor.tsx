@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { updateSiteConfig } from './actions';
-import { Check, X, Edit2 } from 'lucide-react';
+import { updateSiteConfig, deleteSiteConfig } from './actions';
+import { Check, X, Edit2, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface Config { key: string; value: string; label: string; type: string }
 export default function ConfigEditor({ config }: { config: Config }) {
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(config.value);
   const [isSaving, setIsSaving] = useState(false);
@@ -22,6 +24,17 @@ export default function ConfigEditor({ config }: { config: Config }) {
       setValue(config.value); // Revert
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!confirm(`Delete config "${config.label}" (${config.key})? This cannot be undone.`)) return;
+    try {
+      await deleteSiteConfig(config.key);
+      toast.success(`Config "${config.key}" deleted`);
+      router.refresh();
+    } catch {
+      toast.error('Failed to delete config');
     }
   };
 
@@ -91,6 +104,9 @@ export default function ConfigEditor({ config }: { config: Config }) {
             </div>
             <button onClick={() => setIsEditing(true)} className="p-2 text-[#8C7E6A] hover:text-[#E8540A] hover:bg-orange-50 rounded transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
               <Edit2 size={16} />
+            </button>
+            <button onClick={handleDelete} className="p-2 text-[#8C7E6A] hover:text-red-600 hover:bg-red-50 rounded transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+              <Trash2 size={16} />
             </button>
           </>
         )}
