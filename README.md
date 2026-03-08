@@ -21,7 +21,7 @@ The Admin Dashboard is a Next.js 15 (App Router) application independent of the 
 ## Developer & Engineer Guide
 
 ### Prerequisites
-- Node.js 18.17+
+- Node.js 22+ (Required for proper Vitest ESM support)
 - Shared Supabase Project
 
 ### Environment Setup
