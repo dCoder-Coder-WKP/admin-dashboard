@@ -3,9 +3,19 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest) {
+  // Unique request ID for distributed tracing
+  const requestId = crypto.randomUUID();
+
   let res = NextResponse.next({
     request: { headers: req.headers },
-  })
+  });
+
+  // Security headers on every admin response
+  res.headers.set('X-Request-Id', requestId);
+  res.headers.set('X-Content-Type-Options', 'nosniff');
+  res.headers.set('X-Frame-Options', 'DENY');
+  res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.headers.set('X-XSS-Protection', '1; mode=block');
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
