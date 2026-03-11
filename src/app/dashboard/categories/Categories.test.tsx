@@ -2,12 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CategoriesClient from './CategoriesClient';
-import { createCategory, updateCategory, deleteCategory } from './actions';
+import { createCategory, deleteCategory } from './actions';
 import React from 'react';
 
 vi.mock('./actions', () => ({
   createCategory: vi.fn(),
-  updateCategory: vi.fn(),
   deleteCategory: vi.fn(),
 }));
 

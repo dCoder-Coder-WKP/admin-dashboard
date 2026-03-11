@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Save, X } from 'lucide-react';
 import { createSupabaseBrowser } from '@/lib/supabaseBrowser';
 import toast from 'react-hot-toast';
@@ -8,6 +9,8 @@ import toast from 'react-hot-toast';
 interface SiteConfigEditorProps {
   config: SiteConfigItem[];
 }
+
+type InputKind = 'text' | 'textarea' | 'image' | 'url' | 'time' | 'number' | 'boolean';
 
 interface SiteConfigItem {
   id: string;
@@ -124,10 +127,21 @@ export default function SiteConfigEditor({ config }: SiteConfigEditorProps) {
     setHasChanges(false);
   };
 
-  const renderInput = (key: string, item: any) => {
+  const getInputKind = (key: string): InputKind => {
+    if (key.includes('image') || key.endsWith('_bg_url')) return 'image';
+    if (key.includes('url')) return 'url';
+    if (key.includes('open') || key.includes('close')) return 'time';
+    if (key.startsWith('min_') || key.endsWith('_amount') || key.endsWith('_radius')) return 'number';
+    if (key.startsWith('is_')) return 'boolean';
+    if (key.includes('description') || key.includes('content')) return 'textarea';
+    return 'text';
+  };
+
+  const renderInput = (key: string) => {
     const value = editingConfig[key] || '';
+    const inputKind = getInputKind(key);
     
-    switch (item.type) {
+    switch (inputKind) {
       case 'textarea':
         return (
           <textarea
@@ -148,11 +162,15 @@ export default function SiteConfigEditor({ config }: SiteConfigEditorProps) {
               className="w-full px-3 py-2 border border-[#E5E5E0] rounded focus:outline-none focus:ring-2 focus:ring-[#E8540A] focus:border-transparent"
             />
             {value && (
-              <img
-                src={value}
-                alt="Preview"
-                className="h-32 w-auto object-cover rounded border border-[#E5E5E0]"
-              />
+              <div className="relative h-32 w-full">
+                <Image
+                  src={value}
+                  alt="Preview"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="rounded border border-[#E5E5E0] object-cover"
+                />
+              </div>
             )}
           </div>
         );
@@ -241,7 +259,7 @@ export default function SiteConfigEditor({ config }: SiteConfigEditorProps) {
                   <label className="block text-sm font-medium text-[#1A1712] mb-1">
                     {item.key}
                   </label>
-                  {renderInput(key, item)}
+                  {renderInput(key)}
                   {item.description && (
                     <p className="text-xs text-[#8C7E6A] mt-1">{item.description}</p>
                   )}

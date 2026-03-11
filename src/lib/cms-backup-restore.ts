@@ -100,29 +100,31 @@ export const createMenuBackup = async (source: string) => {
   };
 };
 
-// Placeholder functions for other operations
-export const restoreFromBackup = async (_backup: unknown) => {
-  console.log('Restore not implemented yet');
+interface BackupMetadata {
+  version: string;
+  created: string;
+  source: string;
+  type: string;
+  checksum: string;
+}
+
+interface BackupPayload {
+  metadata: BackupMetadata;
+  data: Record<string, unknown>;
+}
+
+export const restoreFromBackup = async (backup: BackupPayload) => {
+  console.info(
+    `[restoreFromBackup] Requested type="${backup.metadata.type}" checksum=${backup.metadata.checksum}`
+  );
+  // TODO: Implement restore logic when finalized
 };
 
-export const restoreFromBackupFile = async (_filePath: string) => {
-  console.log('File restore not implemented yet');
+export const restoreFromBackupFile = async (filePath: string) => {
+  console.info(`[restoreFromBackupFile] Requested file ${filePath}`);
+  // TODO: Implement file-based restore flow when finalized
 };
 
 export const resetToDefaults = async () => {
-  console.log('Reset to defaults not implemented yet');
-};
-
-export const listBackups = async () => {
-  const { data } = await supabase.from('backups').select('*').order('created_at', { ascending: false });
-  return data || [];
-};
-
-export const deleteBackup = async (id: string) => {
-  await supabase.from('backups').delete().eq('id', id);
-};
-
-export const downloadBackup = async (id: string) => {
-  const { data } = await supabase.from('backups').select('backup_data').eq('id', id).single();
-  return data?.backup_data;
+  console.info('[resetToDefaults] No-op reset invoked. Implement actual logic when ready.');
 };

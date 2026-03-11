@@ -81,11 +81,6 @@ interface PizzaPrice {
   price: number;
 }
 
-interface PizzaTopping {
-  pizza_id: string;
-  topping_id: string;
-}
-
 interface Extra {
   id: string;
   name: string;
@@ -110,16 +105,11 @@ interface SiteConfigItem {
 }
 
 type ModalType = "pizza" | "topping" | "size" | "extra" | "category";
-
-interface PizzaFormState extends Pizza {
-  prices: Record<string, string>;
-  toppingIds: string[];
-}
+type TabId = "pizzas" | "toppings" | "sizes" | "extras" | "categories" | "config" | "controls" | "backup";
+type EditingItem = Partial<Pizza> & Partial<Topping> & Partial<Size> & Partial<Extra> & Partial<Category>;
 
 export default function CMSPage() {
-  const [activeTab, setActiveTab] = useState<
-    "pizzas" | "toppings" | "sizes" | "extras" | "categories" | "config" | "controls" | "backup"
-  >("pizzas");
+  const [activeTab, setActiveTab] = useState<TabId>("pizzas");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -128,10 +118,10 @@ export default function CMSPage() {
   const [sizes, setSizes] = useState<Size[]>([]);
   const [pizzas, setPizzas] = useState<Pizza[]>([]);
   const [pizzaPrices, setPizzaPrices] = useState<PizzaPrice[]>([]);
-  const [pizzaToppings, setPizzaToppings] = useState<any[]>([]);
   const [extras, setExtras] = useState<Extra[]>([]);
   const [siteConfig, setSiteConfig] = useState<SiteConfigItem[]>([]);
-  const [editingItem, setEditingItem] = useState<any>(null);
+  const [editingItem, setEditingItem] = useState<EditingItem | null>(null);
+  const [modalType, setModalType] = useState<ModalType | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
@@ -147,7 +137,6 @@ export default function CMSPage() {
         sizesRes,
         pizzasRes,
         pizzaPricesRes,
-        pizzaToppingsRes,
         extrasRes,
         siteConfigRes
       ] = await Promise.all([
@@ -156,7 +145,6 @@ export default function CMSPage() {
         supabase.from("sizes").select("*").order("sort_order"),
         supabase.from("pizzas").select("*").order("sort_order"),
         supabase.from("pizza_prices").select("*"),
-        supabase.from("pizza_toppings").select("*"),
         supabase.from("extras").select("*").order("sort_order"),
         supabase.from("site_config").select("*").order("key")
       ]);
@@ -166,7 +154,6 @@ export default function CMSPage() {
       setSizes(sizesRes.data || []);
       setPizzas(pizzasRes.data || []);
       setPizzaPrices(pizzaPricesRes.data || []);
-      setPizzaToppings(pizzaToppingsRes.data || []);
       setExtras(extrasRes.data || []);
       setSiteConfig(siteConfigRes.data || []);
     } catch (error) {
@@ -177,13 +164,15 @@ export default function CMSPage() {
     }
   };
 
-  const openModal = (type: string, payload?: any) => {
+  const openModal = (type: ModalType, payload?: EditingItem) => {
+    setModalType(type);
     setEditingItem(payload || {});
     setModalOpen(true);
   };
 
   const closeModal = () => {
     setModalOpen(false);
+    setModalType(null);
     setEditingItem(null);
   };
 
@@ -208,13 +197,14 @@ export default function CMSPage() {
     await fetchAll();
   };
 
-  const handleSave = async (tab: string, item: any) => {
+  const handleSave = async (item: EditingItem | null) => {
+    if (!modalType || !item) return;
     setLoading(true);
     try {
       let table = '';
-      let data: any = {};
+      let data: Record<string, unknown> = {};
       
-      switch (tab) {
+      switch (modalType) {
         case 'pizza':
           table = 'pizzas';
           data = {
@@ -253,7 +243,7 @@ export default function CMSPage() {
           data = {
             name: item.name,
             description: item.description,
-            category: item.category,
+            category_id: item.category_id,
             price: item.price,
             sort_order: item.sort_order || 0,
             is_active: item.is_active,
@@ -286,8 +276,7 @@ export default function CMSPage() {
       }
       
       await fetchAll();
-      setModalOpen(false);
-      setEditingItem(null);
+      closeModal();
     } catch (error) {
       console.error(error);
       setMessage('Error saving item');
@@ -330,6 +319,7 @@ export default function CMSPage() {
         setMessage('Backup downloaded successfully');
       }
     } catch (error) {
+      console.error(error);
       setMessage('Error creating backup');
     } finally {
       setLoading(false);
@@ -353,7 +343,7 @@ export default function CMSPage() {
     }
   };
 
-  const tabs = [
+  const tabs: { id: TabId; label: string; icon: typeof Pizza }[] = [
     { id: "pizzas", label: "Pizzas", icon: Pizza },
     { id: "toppings", label: "Toppings", icon: Utensils },
     { id: "sizes", label: "Sizes", icon: Layers },
@@ -384,7 +374,7 @@ export default function CMSPage() {
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
                 activeTab === tab.id
                   ? 'bg-white text-blue-600 shadow-sm'
@@ -779,7 +769,7 @@ export default function CMSPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <h3 className="text-lg font-semibold mb-4">
-              {editingItem?.id ? `Edit ${activeTab}` : `Create ${activeTab}`}
+              {editingItem?.id ? `Edit ${modalType}` : `Create ${modalType}`}
             </h3>
             
             {/* Form fields would go here - simplified for now */}
@@ -850,7 +840,7 @@ export default function CMSPage() {
                 Cancel
               </button>
               <button
-                onClick={() => handleSave(activeTab, editingItem)}
+                onClick={() => handleSave(editingItem)}
                 disabled={loading}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
               >

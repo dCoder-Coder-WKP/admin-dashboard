@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
+import NextImage from 'next/image';
 import { 
   FileText, 
-  Image, 
+  Image as ImageIcon, 
   MessageSquare, 
   Star, 
   Megaphone, 
@@ -97,6 +98,13 @@ interface TeamMember {
 
 type ContentType = 'site-config' | 'content-blocks' | 'testimonials' | 'gallery' | 'banners' | 'faq' | 'team';
 
+type ContentEntity = ContentBlock | Testimonial | GalleryItem | BannerItem | FAQItem | TeamMember;
+
+interface EditingState {
+  type: ContentType;
+  payload?: ContentEntity;
+}
+
 export default function ContentManagementClient({
   siteConfig,
   contentBlocks,
@@ -108,25 +116,25 @@ export default function ContentManagementClient({
 }: ContentManagementClientProps) {
   const [activeTab, setActiveTab] = useState<ContentType>('site-config');
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<any>(null);
+  const [editingState, setEditingState] = useState<EditingState | null>(null);
 
   const tabs = [
     { id: 'site-config', label: 'Site Configuration', icon: Settings, count: siteConfig.length },
     { id: 'content-blocks', label: 'Content Blocks', icon: FileText, count: contentBlocks.length },
     { id: 'testimonials', label: 'Testimonials', icon: MessageSquare, count: testimonials.length },
-    { id: 'gallery', label: 'Gallery', icon: Image, count: gallery.length },
+    { id: 'gallery', label: 'Gallery', icon: ImageIcon, count: gallery.length },
     { id: 'banners', label: 'Banners', icon: Megaphone, count: banners.length },
     { id: 'faq', label: 'FAQ', icon: HelpCircle, count: faq.length },
     { id: 'team', label: 'Team Members', icon: Users, count: teamMembers.length }
   ];
 
-  const handleEdit = (item: any, type: ContentType) => {
-    setEditingItem({ ...item, type });
+  const handleEdit = (item: ContentEntity, type: ContentType) => {
+    setEditingState({ type, payload: item });
     setIsFormOpen(true);
   };
 
   const handleAdd = (type: ContentType) => {
-    setEditingItem({ type });
+    setEditingState({ type });
     setIsFormOpen(true);
   };
 
@@ -262,11 +270,15 @@ export default function ContentManagementClient({
               {gallery.map((item) => (
                 <div key={item.id} className="bg-white rounded border border-[#E5E5E0] overflow-hidden">
                   {item.image_url && (
-                    <img
-                      src={item.image_url}
-                      alt={item.title || 'Gallery image'}
-                      className="w-full h-48 object-cover"
-                    />
+                    <div className="relative w-full h-48">
+                      <NextImage
+                        src={item.image_url}
+                        alt={item.title || 'Gallery image'}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover"
+                      />
+                    </div>
                   )}
                   <div className="p-4">
                     <h4 className="font-semibold mb-1">{item.title}</h4>
@@ -402,11 +414,15 @@ export default function ContentManagementClient({
               {teamMembers.map((member) => (
                 <div key={member.id} className="bg-white rounded border border-[#E5E5E0] overflow-hidden">
                   {member.image_url && (
-                    <img
-                      src={member.image_url}
-                      alt={member.name}
-                      className="w-full h-48 object-cover"
-                    />
+                    <div className="relative w-full h-48">
+                      <NextImage
+                        src={member.image_url}
+                        alt={member.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover"
+                      />
+                    </div>
                   )}
                   <div className="p-4">
                     <h4 className="font-semibold">{member.name}</h4>
@@ -436,9 +452,9 @@ export default function ContentManagementClient({
   };
 
   const renderForm = () => {
-    if (!isFormOpen || !editingItem) return null;
+    if (!isFormOpen || !editingState) return null;
 
-    switch (editingItem.type) {
+    switch (editingState.type) {
       case 'content-blocks':
         return (
           <div className="p-6">
@@ -522,7 +538,7 @@ export default function ContentManagementClient({
       {renderContent()}
 
       {/* Form Modal */}
-      {isFormOpen && (
+      {isFormOpen && editingState && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto">
             {renderForm()}

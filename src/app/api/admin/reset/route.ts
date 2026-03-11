@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { resetToDefaults } from '@/lib/cms-backup-restore';
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     await resetToDefaults();
     return NextResponse.json({ message: 'Database reset successfully' });
